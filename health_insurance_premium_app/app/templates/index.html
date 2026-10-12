@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HealthSure | Premium Predictor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="{{ url_for('static', path='/style.css') }}" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom py-3"><div class="container">
+  <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/"><span class="brand-icon"><i class="bi bi-heart-pulse-fill"></i></span> HealthSure <span class="brand-tag">INSIGHTS</span></a>
+  <span class="navbar-text small text-secondary"><i class="bi bi-shield-check me-1"></i>Premium estimation tool</span>
+</div></nav>
+<main class="container py-4 py-lg-5">
+  <section class="hero row align-items-center g-4 mb-4 mb-lg-5">
+    <div class="col-lg-7"><div class="eyebrow"><span></span> HEALTH COST INTELLIGENCE</div>
+      <h1>Plan your health.<br><span>Know your estimate.</span></h1>
+      <p class="hero-copy">Get an estimated annual health insurance cost based on a few personal and lifestyle details.</p>
+      <div class="hero-points"><span><i class="bi bi-check-circle-fill"></i> Quick estimate</span><span><i class="bi bi-check-circle-fill"></i> Simple inputs</span><span><i class="bi bi-check-circle-fill"></i> ML-powered</span></div>
+    </div>
+    <div class="col-lg-5 d-none d-lg-block"><div class="hero-art"><div class="art-circle circle-one"></div><div class="art-circle circle-two"></div><div class="health-card"><div class="health-card-icon"><i class="bi bi-heart-pulse-fill"></i></div><div class="small text-secondary">YOUR WELLNESS</div><div class="fw-bold fs-4">First, your health.</div><div class="progress mt-3"><div class="progress-bar" style="width:78%"></div></div><div class="d-flex justify-content-between mt-2 small text-secondary"><span>Personalized insights</span><i class="bi bi-arrow-up-right"></i></div></div><div class="floating-plus">+</div><div class="floating-heart"><i class="bi bi-heart-fill"></i></div></div></div>
+  </section>
+  {% if metadata.demo_mode %}<div class="alert alert-warning d-flex gap-2 align-items-start"><i class="bi bi-info-circle-fill mt-1"></i><div><strong>Demo model active.</strong> This app is currently using synthetic example data. Add your real insurance CSV and retrain the model before relying on its estimates.</div></div>{% endif %}
+  <div class="row g-4 align-items-start">
+    <div class="col-lg-7"><section class="panel form-panel"><div class="panel-heading"><div><div class="section-kicker">PERSONAL DETAILS</div><h2>Build your estimate</h2><p>Fill in the details below to calculate a prediction.</p></div><div class="step-mark"><i class="bi bi-clipboard2-pulse"></i></div></div>
+      <form id="prediction-form">
+        <div class="row g-3">
+          <div class="col-md-6"><label for="age" class="form-label">Age <span class="required">*</span></label><div class="input-group"><span class="input-group-text"><i class="bi bi-person"></i></span><input class="form-control" type="number" id="age" name="age" min="18" max="100" placeholder="e.g. 30" value="30" required></div><div class="form-text">Between 18 and 100 years</div></div>
+          <div class="col-md-6"><label for="sex" class="form-label">Sex <span class="required">*</span></label><select class="form-select" id="sex" name="sex" required><option value="female">Female</option><option value="male">Male</option></select></div>
+          <div class="col-md-6"><label for="bmi" class="form-label">Body Mass Index (BMI) <span class="required">*</span></label><div class="input-group"><span class="input-group-text"><i class="bi bi-activity"></i></span><input class="form-control" type="number" id="bmi" name="bmi" min="10" max="80" step="0.1" value="26.5" placeholder="e.g. 26.5" required></div><div class="form-text">Use your known BMI value</div></div>
+          <div class="col-md-6"><label for="smoker" class="form-label">Smoking status <span class="required">*</span></label><select class="form-select" id="smoker" name="smoker" required><option value="no">Non-smoker</option><option value="yes">Smoker</option></select></div>
+          <div class="col-md-6"><label for="children" class="form-label">Number of children / dependents <span class="required">*</span></label><div class="input-group"><span class="input-group-text"><i class="bi bi-people"></i></span><select class="form-select" id="children" name="children"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div></div>
+          <div class="col-12 mt-4"><button class="btn btn-predict w-100" id="submit-btn" type="submit"><span>Predict my premium</span><i class="bi bi-arrow-right-circle ms-2"></i></button><div id="error-message" class="text-danger small mt-3" role="alert"></div></div>
+        </div>
+      </form>
+      <div class="privacy-note"><i class="bi bi-lock-fill"></i><span>Your inputs are used to calculate this estimate in this app.</span></div>
+    </section></div>
+    <div class="col-lg-5"><section class="result-panel" id="result-panel"><div class="result-top"><div class="result-icon"><i class="bi bi-wallet2"></i></div><span class="result-label">YOUR ESTIMATE</span></div><h2 id="result-title">Your result awaits</h2><p id="result-description">Complete the form to see your estimated annual insurance cost.</p><div class="result-amount" id="result-amount">—</div><div class="result-period">ESTIMATED ANNUAL PREMIUM</div><div class="result-divider"></div><div class="result-foot"><i class="bi bi-info-circle"></i><span id="currency-note">Prediction values use the same currency units as the training dataset.</span></div><div id="result-warning" class="result-warning d-none"></div></section>
+      <div class="mini-note mt-3"><div class="mini-note-icon"><i class="bi bi-lightbulb"></i></div><div><strong>Keep in mind</strong><p class="mb-0">This is a machine-learning estimate, not an official insurance quote. Actual premiums depend on insurer rules, coverage, location, and underwriting.</p></div></div>
+    </div>
+  </div>
+  <footer class="app-footer mt-5"><span>© 2026 HealthSure Predictor</span><span>Built with FastAPI · Python · Bootstrap</span></footer>
+</main>
+<script>
+const form = document.getElementById('prediction-form');
+const btn = document.getElementById('submit-btn');
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  document.getElementById('error-message').textContent = '';
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Calculating...';
+  const payload = { age: Number(form.age.value), sex: form.sex.value, bmi: Number(form.bmi.value), smoker: form.smoker.value, children: Number(form.children.value) };
+  try {
+    const response = await fetch('/api/predict', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.detail || 'Unable to calculate a prediction.');
+    document.getElementById('result-title').textContent = 'Estimate calculated';
+    document.getElementById('result-description').textContent = 'Based on the details you provided, your predicted annual cost is:';
+    document.getElementById('result-amount').textContent = new Intl.NumberFormat('en-IN', {maximumFractionDigits: 2}).format(data.predicted_premium);
+    document.getElementById('currency-note').textContent = data.currency_note;
+    const warning = document.getElementById('result-warning');
+    warning.classList.toggle('d-none', !data.demo_mode);
+    warning.textContent = data.demo_mode ? 'Demo estimate only: model trained on synthetic data.' : '';
+    document.getElementById('result-panel').classList.add('has-result');
+  } catch (err) { document.getElementById('error-message').textContent = err.message || 'Could not connect to the server. Is FastAPI running?'; }
+  finally { btn.disabled = false; btn.innerHTML = '<span>Predict my premium</span><i class="bi bi-arrow-right-circle ms-2"></i>'; }
+});
+</script>
+</body></html>
